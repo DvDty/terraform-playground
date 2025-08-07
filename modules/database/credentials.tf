@@ -1,4 +1,3 @@
-
 resource "random_string" "username" {
   length  = 8
   upper   = false
