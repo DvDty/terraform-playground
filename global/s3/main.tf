@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
     region       = "eu-central-1"
-    key          = "workspaces-example/terraform.tfstate"
-    bucket       = "dvdty-example-terraform-state2"
+    key          = "global/s3/terraform.tfstate"
+    bucket       = "terraform-state-93fh8a023"
     encrypt      = true
     use_lockfile = true
   }
@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "dvdty-example-terraform-state2"
+  bucket = "terraform-state-93fh8a023"
 
   lifecycle {
     prevent_destroy = true
@@ -45,9 +45,4 @@ resource "aws_s3_bucket_public_access_block" "public_access" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-output "s3_bucket_arn" {
-  value       = aws_s3_bucket.terraform_state.arn
-  description = "The ARN of the S3 bucket"
 }
