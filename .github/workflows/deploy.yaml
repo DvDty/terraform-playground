@@ -6,20 +6,10 @@ on:
       branch_one:
         description: "First branch to merge into master"
         required: true
-        type: choice
-        options:
-          - feature/branch1
-          - feature/branch2
-          - feature/branch3
       branch_two:
         description: "Second branch to merge into master (optional)"
         required: false
-        type: choice
-        options:
-          - none
-          - feature/branch1
-          - feature/branch2
-          - feature/branch3
+        default: ""
 
 jobs:
   merge-and-deploy:
@@ -29,7 +19,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: master
-          fetch-depth: 0  # fetch full history for merge
+          fetch-depth: 0
+
+      - name: List available branches
+        run: |
+          echo "Available branches:"
+          git ls-remote --heads origin | sed 's?.*refs/heads/??'
 
       - name: Configure Git
         run: |
@@ -42,20 +37,17 @@ jobs:
           git fetch origin ${{ github.event.inputs.branch_one }}
           git merge --no-commit --no-ff origin/${{ github.event.inputs.branch_one }} || true
 
-      - name: Merge second branch (if selected)
-        if: ${{ github.event.inputs.branch_two != 'none' }}
+      - name: Merge second branch (if provided)
+        if: ${{ github.event.inputs.branch_two != '' }}
         run: |
           echo "Merging branch: ${{ github.event.inputs.branch_two }}"
           git fetch origin ${{ github.event.inputs.branch_two }}
           git merge --no-commit --no-ff origin/${{ github.event.inputs.branch_two }} || true
 
-      - name: Show merge status
+      - name: Show merge result
         run: |
-          echo "Merge result:"
           git status
-          echo "Merged branches into local master."
 
       - name: Placeholder Deployment
         run: |
           echo "🚀 Deploying locally (placeholder)..."
-          # Your deployment logic goes here
