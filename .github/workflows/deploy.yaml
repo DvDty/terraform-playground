@@ -1,0 +1,61 @@
+name: Manual Merge and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_one:
+        description: "First branch to merge into master"
+        required: true
+        type: choice
+        options:
+          - feature/branch1
+          - feature/branch2
+          - feature/branch3
+      branch_two:
+        description: "Second branch to merge into master (optional)"
+        required: false
+        type: choice
+        options:
+          - none
+          - feature/branch1
+          - feature/branch2
+          - feature/branch3
+
+jobs:
+  merge-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0  # fetch full history for merge
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Merge first branch
+        run: |
+          echo "Merging branch: ${{ github.event.inputs.branch_one }}"
+          git fetch origin ${{ github.event.inputs.branch_one }}
+          git merge --no-commit --no-ff origin/${{ github.event.inputs.branch_one }} || true
+
+      - name: Merge second branch (if selected)
+        if: ${{ github.event.inputs.branch_two != 'none' }}
+        run: |
+          echo "Merging branch: ${{ github.event.inputs.branch_two }}"
+          git fetch origin ${{ github.event.inputs.branch_two }}
+          git merge --no-commit --no-ff origin/${{ github.event.inputs.branch_two }} || true
+
+      - name: Show merge status
+        run: |
+          echo "Merge result:"
+          git status
+          echo "Merged branches into local master."
+
+      - name: Placeholder Deployment
+        run: |
+          echo "🚀 Deploying locally (placeholder)..."
+          # Your deployment logic goes here
