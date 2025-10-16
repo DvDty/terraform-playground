@@ -58,4 +58,4 @@ jobs:
 
       - name: Placeholder Deployment
         run: |
-          echo "🚀 Deploying locally (placeholder)..."
+          echo "🚀 Deploying..."
