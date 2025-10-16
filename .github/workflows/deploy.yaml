@@ -3,11 +3,19 @@ name: Manual Merge and Deploy
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - qa
+          - dev
+        default: 'qa'
       branch_one:
-        description: "First branch to merge into master"
+        description: "First branch"
         required: true
       branch_two:
-        description: "Second branch to merge into master (optional)"
+        description: "Second branch (optional)"
         required: false
         default: ""
 
